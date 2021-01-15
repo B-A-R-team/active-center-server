@@ -1,0 +1,67 @@
+{
+  "name": "ative-center-server",
+  "version": "1.0.0",
+  "description": "活动中心管理项目服务端",
+  "directories": {
+    "test": "test"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "git add ."
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "scripts": {
+    "dev": "set PORT=2048&&nodemon --exec babel-node src/bin/start.js",
+    "dev:example": "set PORT=2048&&nodemon --exec babel-node src/example.js",
+    "pretest": "eslint ./test --fix",
+    "test": "set MODE=test&&mocha -r @babel/register test/**/*test.js",
+    "prebuild": "eslint ./src --fix",
+    "build": "babel src --out-dir dist",
+    "start": "node dist/bin/start.js",
+    "predeploy": "build",
+    "deploy": "pm2 start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/B-A-R-team/active-center-server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "Apache-2.0 License",
+  "bugs": {
+    "url": "https://github.com/B-A-R-team/active-center-server/issues"
+  },
+  "homepage": "https://github.com/B-A-R-team/active-center-server#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.12.10",
+    "@babel/core": "^7.12.10",
+    "@babel/node": "^7.12.10",
+    "@babel/plugin-transform-runtime": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/register": "^7.12.10",
+    "chai": "^4.2.0",
+    "eslint": "^7.17.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "husky": "^4.3.6",
+    "lint-staged": "^10.5.3",
+    "mocha": "^8.2.1",
+    "nodemon": "^2.0.6",
+    "supertest": "^6.0.1"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.12.5",
+    "@koa/router": "^10.0.0",
+    "koa": "^2.13.1",
+    "koa-bodyparser": "^4.3.0",
+    "koa2-cors": "^2.0.6",
+    "mysql2": "^2.2.5",
+    "sequelize": "^6.3.5"
+  }
+}
