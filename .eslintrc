@@ -23,6 +23,7 @@
       }
     ],
     "implicit-arrow-linebreak": "off",
-    "import/no-cycle": "off"
+    "import/no-cycle": "off",
+    "operator-linebreak": "off"
   }
 }

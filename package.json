@@ -18,7 +18,7 @@
   },
   "scripts": {
     "dev": "set PORT=2048&&nodemon --exec babel-node src/bin/start.js",
-    "dev:example": "set PORT=2048&&nodemon --exec babel-node src/example.js",
+    "dev:local": "set PORT=2048&&set MODE=local&&nodemon --exec babel-node src/bin/start.js",
     "pretest": "eslint ./test --fix",
     "test": "set MODE=test&&mocha -r @babel/register test/**/*test.js",
     "prebuild": "eslint ./src --fix",
