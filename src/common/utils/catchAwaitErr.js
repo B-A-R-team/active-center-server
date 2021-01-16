@@ -1,6 +1,7 @@
 /**
  * 捕获async/await的错误
  * @param {Promise} promiseFunc Promise函数
+ * @returns {Promise<[error:Error | null, data:T | null]>}
  * @example 使用说明
  *  async function throwErr() {
  *     throw new Error('123');

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "活动中心管理项目服务端",
   "directories": {
+    "doc": "docs",
     "test": "test"
   },
   "lint-staged": {
@@ -58,8 +59,11 @@
   "dependencies": {
     "@babel/runtime": "^7.12.5",
     "@koa/router": "^10.0.0",
+    "crypto": "^1.0.1",
+    "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.1",
     "koa-bodyparser": "^4.3.0",
+    "koa-jwt": "^4.0.0",
     "koa2-cors": "^2.0.6",
     "mysql2": "^2.2.5",
     "sequelize": "^6.3.5"

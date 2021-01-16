@@ -26,8 +26,8 @@ const rootRoutes = routerGroup('/api/v1', (rootRouter) => {
      * 或者可以写成 userRouter.get('/', userController.findAll.bind(userController))
      */
     userRouter.get('/', (ctx) => userController.findAll(ctx));
+    userRouter.get('/:id', (ctx) => userController.findById(ctx));
   });
-
 
   // 挂载所有路由
   rootRouter.use(userRoutes.routes());

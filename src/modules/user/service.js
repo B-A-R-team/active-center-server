@@ -11,8 +11,16 @@ export default class UserService {
    * 查找所有用户
    */
   async findAll() {
-    const [err, users] = await catchAwaitErr(this.user.findAll());
+    const result = await catchAwaitErr(this.user.findAll());
+    return result;
+  }
 
-    return [err, users];
+  /**
+   * 根据ID获取用户
+   * @param {number} id 用户ID
+   */
+  async findById(id) {
+    const result = await catchAwaitErr(this.user.findOne({ where: id }));
+    return result;
   }
 }

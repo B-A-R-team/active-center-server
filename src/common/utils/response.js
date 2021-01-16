@@ -5,6 +5,7 @@ export const httpState = {
   SUCCESS: 200,
   INVALID_PARAMS: 400,
   ERROR: 500,
+  TOKENEFAIL: 10001,
 };
 
 /**
@@ -14,6 +15,7 @@ export const codeToMessage = {
   [httpState.SUCCESS]: 'success',
   [httpState.INVALID_PARAMS]: 'invalid params',
   [httpState.ERROR]: 'error',
+  [httpState.TOKENEFAIL]: 'token fail',
 };
 
 /**

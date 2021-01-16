@@ -21,30 +21,15 @@ export default class UserController {
   }
 
   /**
-   * 创建用户
+   * 根据ID获取用户
    * @param {import('../../types').CustomContext} ctx 上下文
    */
-  async createUser(ctx) {
-    const [err, result] = await this.userService.createUser(ctx.request.body);
+  async findById(ctx) {
+    const [err, user] = await this.userService.findById(Number(ctx.params.id));
     if (err) {
       ctx.body = errorResponse(err.message);
       return;
     }
-    ctx.body = successResponse(result);
-  }
-
-  /**
-   * 删除用户
-   * @param {import('../../types').CustomContext} ctx 上下文
-   */
-  async deleteUser(ctx) {
-    const [err, result] = await this.userService.deleteUser(
-      Number(ctx.params.id)
-    );
-    if (err) {
-      ctx.body = errorResponse(err.message);
-      return;
-    }
-    ctx.body = successResponse(result);
+    ctx.body = successResponse(user);
   }
 }
