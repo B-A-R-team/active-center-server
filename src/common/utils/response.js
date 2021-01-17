@@ -47,3 +47,17 @@ export function successResponse(data) {
 export function errorResponse(message) {
   return response(httpState.ERROR, null, message);
 }
+
+/**
+ * 返回token的响应
+ * @param {unknown|unknown[]} data 数据
+ * @param {string} token token
+ */
+export function responseWithToken(data, token) {
+  return {
+    code: 200,
+    message: codeToMessage(200),
+    data,
+    token,
+  };
+}

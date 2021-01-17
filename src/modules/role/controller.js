@@ -1,1 +1,1 @@
-export default function RoleController() {}
+export default class RoleController {}

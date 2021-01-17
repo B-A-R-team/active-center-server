@@ -1,1 +1,1 @@
-export default function PermissionController() {}
+export default class PermissionController {}

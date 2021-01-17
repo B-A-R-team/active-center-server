@@ -1,1 +1,1 @@
-export default function RoleService() {}
+export default class RoleService {}

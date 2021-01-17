@@ -24,6 +24,8 @@
     ],
     "implicit-arrow-linebreak": "off",
     "import/no-cycle": "off",
-    "operator-linebreak": "off"
+    "operator-linebreak": "off",
+    "camelcase": "off",
+    "object-curly-newline": "off"
   }
 }

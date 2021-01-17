@@ -1,1 +1,1 @@
-export default function PermissionService() {}
+export default class PermissionService {}
