@@ -16,9 +16,9 @@ export default class <%= name %>Controller {
   async findAll(ctx) {
     const [err, <%= h.changeCase.lcFirst(name) %>s] = await this.<%= h.changeCase.lcFirst(name) %>Service.findAll();
     if (err) {
-      ctx.request.body = errorResponse(err.message);
+      ctx.body = errorResponse(err.message);
       return;
     }
-    ctx.request.body = successResponse(<%= h.changeCase.lcFirst(name) %>s);
+    ctx.body = successResponse(<%= h.changeCase.lcFirst(name) %>s);
   }
 }

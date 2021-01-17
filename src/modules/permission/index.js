@@ -1,4 +1,5 @@
-import PermissionEntity from './entity';
 import PermissionController from './controller';
+import PermissionService from './service';
+import PermissionEntity from './entity';
 
-export { PermissionEntity, PermissionController };
+export { PermissionController, PermissionService, PermissionEntity };

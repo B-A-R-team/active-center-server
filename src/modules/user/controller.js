@@ -19,10 +19,10 @@ export default class UserController {
   async findAll(ctx) {
     const [err, users] = await this.userService.findAll();
     if (err) {
-      ctx.request.body = errorResponse(err.message);
+      ctx.body = errorResponse(err.message);
       return;
     }
-    ctx.request.body = successResponse(users);
+    ctx.body = successResponse(users);
   }
 
   /**
@@ -32,10 +32,10 @@ export default class UserController {
   async findById(ctx) {
     const [err, user] = await this.userService.findById(Number(ctx.params.id));
     if (err) {
-      ctx.request.body = errorResponse(err.message);
+      ctx.body = errorResponse(err.message);
       return;
     }
-    ctx.request.body = successResponse(user);
+    ctx.body = successResponse(user);
   }
 
   /**
@@ -57,10 +57,10 @@ export default class UserController {
     const findStrategy = async (findBy, value) => {
       const [err, user] = await findBy(Number(value));
       if (err) {
-        ctx.request.body = errorResponse(err.message);
+        ctx.body = errorResponse(err.message);
         return;
       }
-      ctx.request.body = successResponse(user);
+      ctx.body = successResponse(user);
     };
 
     if (id) {
@@ -83,10 +83,10 @@ export default class UserController {
   async register(ctx) {
     const [err] = await this.userService.register(ctx.request.body);
     if (err) {
-      ctx.request.body = errorResponse(err.message);
+      ctx.body = errorResponse(err.message);
       return;
     }
-    ctx.request.body = successResponse({ result: true });
+    ctx.body = successResponse({ result: true });
   }
 
   /**
@@ -99,10 +99,10 @@ export default class UserController {
       ctx.request.body.password
     );
     if (err) {
-      ctx.request.body = errorResponse(err.message);
+      ctx.body = errorResponse(err.message);
       return;
     }
-    ctx.request.body = responseWithToken(
+    ctx.body = responseWithToken(
       {
         id: user.id,
         stu_id: user.stu_id,
