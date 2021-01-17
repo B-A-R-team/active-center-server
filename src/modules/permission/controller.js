@@ -26,7 +26,7 @@ export default class PermissionController {
   async create(ctx) {
     const [err] = await this.permissionService.create(ctx.request.body);
     if (err) {
-      ctx.request.body = errorResponse(err.message);
+      ctx.body = errorResponse(err.message);
       return;
     }
     ctx.body = successResponse({ result: true });

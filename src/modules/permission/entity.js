@@ -9,7 +9,7 @@ Permission.init(
     name: { type: DataTypes.CHAR(20), allowNull: false },
     desc: { type: DataTypes.CHAR(255), allowNull: false },
     url: { type: DataTypes.CHAR(128), allowNull: false },
-    type: { type: DataTypes.ENUM('MENU', 'PAGE', 'REQUEST'), allowNull: false },
+    type: { type: DataTypes.CHAR(20), allowNull: false },
   },
   { sequelize: initDB(), modelName: 'Permission' }
 );

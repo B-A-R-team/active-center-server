@@ -1,4 +1,5 @@
-import RoleEntity from './entity';
 import RoleController from './controller';
+import RoleService from './service';
+import RoleEntity from './entity';
 
-export { RoleController, RoleEntity };
+export { RoleController, RoleService, RoleEntity };

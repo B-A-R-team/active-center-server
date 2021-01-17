@@ -7,6 +7,27 @@ export default class TeamService {
   }
 
   /**
+   * 获取所有团队
+   */
+  async findAll() {
+    const result = await catchAwaitErr(
+      this.team.findAll({ where: { is_delete: false } })
+    );
+    return result;
+  }
+
+  /**
+   * 根据ID查找团队
+   * @param {number} id 团队ID
+   */
+  async findById(id) {
+    const result = await catchAwaitErr(
+      this.team.findOne({ where: { id, is_delete: false } })
+    );
+    return result;
+  }
+
+  /**
    * 创建团队
    * @param {import('../../types').CreateTeamDto} team 团队
    */

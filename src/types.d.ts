@@ -4,7 +4,6 @@
 
 import { RouterParamContext } from '@koa/router';
 import { ParameterizedContext } from 'koa';
-import { UserService } from './modules/user';
 
 export type CustomContext = ParameterizedContext<
   any,
@@ -26,12 +25,18 @@ export type UserDto = {
   is_delete: boolean;
   createdAt: Date;
   updatedAt: Date;
+  Team?: TeamDto;
 };
 
 export type CreateUserDto = Pick<
   UserDto,
   'name' | 'password' | 'class_name' | 'stu_id' | 'team_id'
 >;
+
+export type LoginDto = Pick<
+  UserDto,
+  'id' | 'name' | 'stu_id' | 'avatar_url' | 'team_id'
+> & { role_id: number[] };
 
 export type TeamDto = {
   id: number;

@@ -7,6 +7,19 @@ export default class TeamController {
   }
 
   /**
+   * 获取所有团队信息
+   * @param {import('../../types').CustomContext} ctx 上下文
+   */
+  async findAll(ctx) {
+    const [err, teams] = await this.teamService.findAll();
+    if (err) {
+      ctx.body = errorResponse(err.message);
+      return;
+    }
+    ctx.body = successResponse(teams);
+  }
+
+  /**
    * 创建团队
    * @param {import('../../types').CustomContext} ctx 上下文
    */

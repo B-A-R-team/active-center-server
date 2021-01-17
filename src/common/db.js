@@ -15,3 +15,10 @@ export default function initDB() {
 
   return sequelize;
 }
+
+/**
+ * 断开数据库连接
+ */
+export function closeDbConnection() {
+  sequelize.close();
+}

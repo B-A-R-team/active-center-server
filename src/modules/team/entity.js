@@ -9,7 +9,7 @@ Team.init(
     name: { type: DataTypes.CHAR(20), allowNull: false },
     teacher: { type: DataTypes.CHAR(10), allowNull: false },
     caption_id: { type: DataTypes.INTEGER },
-    tables: { type: DataTypes.CHAR(50), allowNull: false },
+    tables: { type: DataTypes.CHAR(50) },
     is_delete: {
       type: DataTypes.BOOLEAN,
       allowNull: false,

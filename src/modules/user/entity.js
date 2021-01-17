@@ -10,7 +10,7 @@ User.init(
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     name: { type: DataTypes.CHAR(15), allowNull: false },
     password: { type: DataTypes.CHAR(255), allowNull: false },
-    stu_id: { type: DataTypes.CHAR(9), allowNull: false },
+    stu_id: { type: DataTypes.CHAR(9), allowNull: false, unique: true },
     gender: { type: DataTypes.TINYINT(2) },
     card_id: { type: DataTypes.CHAR(10) },
     phone: { type: DataTypes.CHAR(11) },

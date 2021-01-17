@@ -55,8 +55,8 @@ export function errorResponse(message) {
  */
 export function responseWithToken(data, token) {
   return {
-    code: 200,
-    message: codeToMessage(200),
+    code: httpState.SUCCESS,
+    message: codeToMessage[httpState.SUCCESS],
     data,
     token,
   };

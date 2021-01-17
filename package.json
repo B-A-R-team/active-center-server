@@ -22,12 +22,14 @@
     "dev:local": "set PORT=2048&&set MODE=local&&nodemon --exec babel-node src/bin/start.js",
     "pretest": "eslint ./test --fix",
     "test": "set MODE=test&&mocha -r @babel/register test/**/*test.js",
+    "coverage": "nyc npm run test",
     "prebuild": "eslint ./src --fix",
     "build": "babel src --out-dir dist",
     "start": "node dist/bin/start.js",
     "predeploy": "build",
     "deploy": "pm2 start",
-    "new": "hygen module new"
+    "new": "hygen module new",
+    "new:test": "hygen test new"
   },
   "repository": {
     "type": "git",
@@ -56,6 +58,7 @@
     "lint-staged": "^10.5.3",
     "mocha": "^8.2.1",
     "nodemon": "^2.0.6",
+    "nyc": "^15.1.0",
     "supertest": "^6.0.1"
   },
   "dependencies": {
