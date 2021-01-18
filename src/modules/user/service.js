@@ -73,7 +73,7 @@ export default class UserService {
       })
     );
 
-    return [err, this.adapterUserData(user)];
+    return [err, user ? this.adapterUserData(user) : user];
   }
 
   /**
@@ -88,7 +88,7 @@ export default class UserService {
         where: { stu_id, is_delete: false },
       })
     );
-    return [err, this.adapterUserData(user)];
+    return [err, user ? this.adapterUserData(user) : user];
   }
 
   /**
@@ -103,7 +103,7 @@ export default class UserService {
         where: { card_id, is_delete: false },
       })
     );
-    return [err, this.adapterUserData(user)];
+    return [err, user ? this.adapterUserData(user) : user];
   }
 
   /**
