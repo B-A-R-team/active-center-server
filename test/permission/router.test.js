@@ -15,9 +15,9 @@ describe('# 权限Router', () => {
     server.close();
   });
 
-  it('GET /api/v1/permission', async () => {
+  it('GET /api/permission', async () => {
     const res = await request(server)
-      .get('/api/v1/permission')
+      .get('/api/permission')
       .set('Authorization', `Bearer ${token}`);
     expect(res.body.code).to.be.eq(200);
   });

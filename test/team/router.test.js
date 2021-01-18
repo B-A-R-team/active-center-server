@@ -15,9 +15,9 @@ describe('# 团队Router', () => {
     server.close();
   });
 
-  it('GET /api/v1/team', async () => {
+  it('GET /api/team', async () => {
     const res = await request(server)
-      .get('/api/v1/team')
+      .get('/api/team')
       .set('Authorization', `Bearer ${token}`);
     expect(res.body.code).to.be.eq(200);
   });

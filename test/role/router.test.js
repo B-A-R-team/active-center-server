@@ -15,9 +15,9 @@ describe('# 角色Router', () => {
     server.close();
   });
 
-  it('GET /api/v1/role', async () => {
+  it('GET /api/role', async () => {
     const res = await request(server)
-      .get('/api/v1/role')
+      .get('/api/role')
       .set('Authorization', `Bearer ${token}`);
     expect(res.body.code).to.be.eq(200);
   });

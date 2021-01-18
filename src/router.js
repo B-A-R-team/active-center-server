@@ -18,22 +18,22 @@ router.get('/', async (ctx) => {
 
 /**
  * 基础路由
- * POST   api/v1/register 注册
- * POST   api/v1/login 登录
+ * POST   api/register 注册
+ * POST   api/login 登录
  */
-const rootRoutes = routerGroup('/api/v1', (rootRouter) => {
+const rootRoutes = routerGroup('/api', (rootRouter) => {
   const baseApiController = new UserController();
   rootRouter.post('/register', (ctx) => baseApiController.register(ctx));
   rootRouter.post('/login', (ctx) => baseApiController.login(ctx));
   /**
    * 用户路由
-   * GET      api/v1/user 查找全部用户
-   * GET      api/v1/user?id 根据ID查找
-   * GET      api/v1/user?card_id 根据卡号查找
-   * GET      api/v1/user?stu_id 根据学号查找
-   * GET      api/v1/user/:id 根据ID查找用户
-   * PATCH    api/v1/user/:id 修改部分信息
-   * PATCH    api/v1/user/:id?bind=true 绑定卡号
+   * GET      api/user 查找全部用户
+   * GET      api/user?id 根据ID查找
+   * GET      api/user?card_id 根据卡号查找
+   * GET      api/user?stu_id 根据学号查找
+   * GET      api/user/:id 根据ID查找用户
+   * PATCH    api/user/:id 修改部分信息
+   * PATCH    api/user/:id?bind=true 绑定卡号
    */
   const userRoutes = routerGroup('/user', (userRouter) => {
     const userController = new UserController();
@@ -49,7 +49,7 @@ const rootRoutes = routerGroup('/api/v1', (rootRouter) => {
 
   /**
    * 角色路由
-   * POST   api/v1/role 创建角色
+   * POST   api/role 创建角色
    */
   const roleRoutes = routerGroup('/role', (roleRouter) => {
     const roleController = new RoleController();
@@ -60,8 +60,8 @@ const rootRoutes = routerGroup('/api/v1', (rootRouter) => {
 
   /**
    * 权限路由
-   * GET    api/v1/permission 获取权限
-   * POST   api/v1/permission 创建权限
+   * GET    api/permission 获取权限
+   * POST   api/permission 创建权限
    */
   const permissionRoutes = routerGroup('/permission', (permissionRouter) => {
     const permissionController = new PermissionController();
@@ -72,8 +72,8 @@ const rootRoutes = routerGroup('/api/v1', (rootRouter) => {
 
   /**
    * 团队路由
-   * GET    api/v1/team 获取所有团队信息
-   * POST   api/v1/team 创建团队
+   * GET    api/team 获取所有团队信息
+   * POST   api/team 创建团队
    */
   const teamRoutes = routerGroup('/team', (teamRouter) => {
     const teamController = new TeamController();

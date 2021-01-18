@@ -18,9 +18,9 @@ describe('# <%= name %>Router', () => {
     server.close();
   });
 
-  it('GET /api/v1/<%= h.changeCase.lcFirst(name) %>', async () => {
+  it('GET /api/<%= h.changeCase.lcFirst(name) %>', async () => {
     const res = await request(server)
-      .get('/api/v1/<%= h.changeCase.lcFirst(name) %>')
+      .get('/api/<%= h.changeCase.lcFirst(name) %>')
       .set('Authorization', `Bearer ${token}`);
     expect(res.body.code).to.be.eq(200);
   });

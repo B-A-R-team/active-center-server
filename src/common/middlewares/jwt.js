@@ -7,16 +7,16 @@ import { JWT_SECRET } from '../../config/sensitive';
 
 const notCheckApi = [
   {
-    path: /^\/api\/v1\/team*/,
+    path: /^\/api\/team*/,
     method: 'GET',
   },
   {
-    path: /^\/api\/v1\/home/,
+    path: /^\/api\/home/,
     method: 'GET',
   },
 ];
 
-const specialApi = ['/', '/api/v1', '/api/v1/register', '/api/v1/login'];
+const specialApi = ['/', '/api', '/api/register', '/api/login'];
 
 function isInApiArr(path, method) {
   return notCheckApi.some((route) => {
