@@ -4,6 +4,7 @@ import { TeamController } from './modules/team';
 import { UserController } from './modules/user';
 import { RoleController } from './modules/role';
 import { PermissionController } from './modules/permission';
+import { SignController } from './modules/sign';
 
 const router = new Router();
 
@@ -82,12 +83,41 @@ const rootRoutes = routerGroup('/api', (rootRouter) => {
     teamRouter.post('/', (ctx) => teamController.create(ctx));
   });
 
+  /**
+   * 签到路由
+   * POST api/sign 添加签到记录
+   * GET api/sign 获取所有团队一周内签到记录
+   * GET api/sign/user/:id?type=today 根据用户ID查找当天签到数据
+   * GET api/sign/user/:id?type=week 根据用户ID查找一周签到数据
+   * GET api/sign/team/:id?type=today 根据团队ID查找当天签到数据
+   * GET api/sign/team/:id?type=week 根据团队ID查找一周签到数据
+   * GET api/sign/time?start='2021-01-12'&end='2021-01-20' 查找指定时间段内的签到数据
+   *根据用户ID或团队ID查找指定时间段内的签到数据
+   * GET api/sign/time?start='2021-01-12'&end='2021-01-20'&user_id=2
+   * GET api/sign/time?start='2021-01-12'&end='2021-01-20'&team_id=16
+   * GET api/sign/time?start='2021-01-12'&end='2021-01-20'&user_id=2&team_id=16
+  */
+  const signRoutes = routerGroup('/sign', (signRouter) => {
+    const signController = new SignController();
+    // 添加签到记录
+    signRouter.post('/', (ctx) => signController.signIn(ctx));
+    // 获取一周内的团队签到统计
+    signRouter.get('/', (ctx) => signController.findTeamListByWeek(ctx));
+    // 根据ID获取用户签到信息
+    signRouter.get('/user/:id', (ctx) => signController.findUserSignById(ctx));
+    // 根据ID获取团队签到信息
+    signRouter.get('/team/:id', (ctx) => signController.findTeamSignById(ctx));
+    // 获取一段时间内的签到统计
+    signRouter.get('/time', (ctx) => signController.findTeamListByTime(ctx));
+  });
+
   // 挂载所有路由
   rootRouter.use(
     userRoutes.routes(),
     roleRoutes.routes(),
     permissionRoutes.routes(),
-    teamRoutes.routes()
+    teamRoutes.routes(),
+    signRoutes.routes(),
   );
 });
 
