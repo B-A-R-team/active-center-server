@@ -1,10 +1,31 @@
 import Router from '@koa/router';
+import multer from '@koa/multer';
+import path from 'path';
 import routerGroup from './common/utils/routerGroup';
 import { TeamController } from './modules/team';
 import { UserController } from './modules/user';
 import { RoleController } from './modules/role';
 import { PermissionController } from './modules/permission';
 import { SignController } from './modules/sign';
+import uploadConfig from './config/upload';
+
+const avatarStorage = multer.diskStorage({
+  destination(req, file, cb) {
+    cb(null, path.join(__dirname, '..', uploadConfig.avatarDir));
+  },
+  filename(req, file, cb) {
+    cb(
+      null,
+      file.fieldname +
+        Date.now() +
+        file.originalname.slice(file.originalname.indexOf('.'))
+    );
+  },
+});
+
+const uploadAvatar = multer({
+  storage: avatarStorage,
+});
 
 const router = new Router();
 
@@ -21,11 +42,16 @@ router.get('/', async (ctx) => {
  * 基础路由
  * POST   api/register 注册
  * POST   api/login 登录
+ * POST   api/upload/avatar/:id 上传头像
  */
 const rootRoutes = routerGroup('/api', (rootRouter) => {
   const baseApiController = new UserController();
   rootRouter.post('/register', (ctx) => baseApiController.register(ctx));
   rootRouter.post('/login', (ctx) => baseApiController.login(ctx));
+  rootRouter.post('/upload/avatar/:id', uploadAvatar.single('avatar'), (ctx) =>
+    baseApiController.uploadAvatar(ctx)
+  );
+
   /**
    * 用户路由
    * GET      api/user 查找全部用户
@@ -96,7 +122,7 @@ const rootRoutes = routerGroup('/api', (rootRouter) => {
    * GET api/sign/time?start='2021-01-12'&end='2021-01-20'&user_id=2
    * GET api/sign/time?start='2021-01-12'&end='2021-01-20'&team_id=16
    * GET api/sign/time?start='2021-01-12'&end='2021-01-20'&user_id=2&team_id=16
-  */
+   */
   const signRoutes = routerGroup('/sign', (signRouter) => {
     const signController = new SignController();
     // 添加签到记录
@@ -117,7 +143,7 @@ const rootRoutes = routerGroup('/api', (rootRouter) => {
     roleRoutes.routes(),
     permissionRoutes.routes(),
     teamRoutes.routes(),
-    signRoutes.routes(),
+    signRoutes.routes()
   );
 });
 

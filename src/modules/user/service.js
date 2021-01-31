@@ -189,4 +189,16 @@ export default class UserService {
     );
     return result;
   }
+
+  /**
+   * 修改头像
+   * @param {number} id 用户ID
+   * @param {string} avatar_url 头像url
+   */
+  async updateAvatar(id, avatar_url) {
+    const result = await catchAwaitErr(
+      this.user.update({ avatar_url }, { where: { id } })
+    );
+    return result;
+  }
 }

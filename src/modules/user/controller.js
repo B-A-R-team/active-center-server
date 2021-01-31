@@ -1,3 +1,4 @@
+import path from 'path';
 import response, {
   errorResponse,
   httpState,
@@ -6,6 +7,7 @@ import response, {
 } from '../../common/utils/response';
 import { generateToken } from '../../common/utils/tokenHelper';
 import UserService from './service';
+import uploadConfig from '../../config/upload';
 
 export default class UserController {
   // 注入service
@@ -158,5 +160,28 @@ export default class UserController {
       return;
     }
     ctx.body = successResponse({ result: true });
+  }
+
+  /**
+   * 上传头像
+   * @param {import('../../types').CustomContext} ctx 上下文
+   */
+  async uploadAvatar(ctx) {
+    const avatar_url = `${uploadConfig.avatarDir.replace('/public', '')}/${
+      ctx.request.file.filename
+    }`;
+
+    const [err] = await this.userService.updateAvatar(
+      Number(ctx.params.id),
+      avatar_url
+    );
+    if (err) {
+      ctx.body = errorResponse(err.message);
+      return;
+    }
+
+    ctx.body = successResponse({
+      avatar_url,
+    });
   }
 }
