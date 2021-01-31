@@ -5,7 +5,7 @@
 import { databaseHost, databasePassword, localPassword } from './sensitive';
 
 export default {
-  database: 'active_center_dev',
+  database: process.env.MODE === 'prod' ? 'active_center' : 'active_center_dev',
   username: 'root',
   // localPassword 为本地数据库密码
   password:
