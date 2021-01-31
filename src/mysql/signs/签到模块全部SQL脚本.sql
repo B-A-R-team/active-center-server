@@ -1,0 +1,165 @@
+-- ---- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+-- -- -- -- -- -- -- -- -- 签到模块相关全部SQL脚本-- -- -- -- -- -- -- -- -- -- -- 
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+-- 
+-- 
+-- 签到模块相关存储过程: 以下SQL脚本按次序执行。
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- 
+-- 
+-- 创建日期时间表
+-- CREATE TABLE `mydate` ( `id` INT ( 10 ) NOT NULL AUTO_INCREMENT, `mydate` datetime DEFAULT NULL, PRIMARY KEY ( `id` ) ) ENGINE = INNODB AUTO_INCREMENT = 1;
+-- 
+-- 
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- 
+-- 
+-- 创建日期时间表数据填充存储过程
+-- CREATE	PROCEDURE insertDate(
+-- 	IN startTime VARCHAR(10),
+-- 	IN endTime VARCHAR(10)
+-- )
+-- BEGIN
+-- 	DECLARE i INT DEFAULT 0;
+-- 	DECLARE beginDate datetime;
+-- 	DECLARE endDate datetime;
+-- 	DECLARE difDay int DEFAULT 0;
+-- 	set beginDate = DATE_FORMAT(startTime,'%Y-%m-%d %H:%i:%s');
+-- 	set endDate = DATE_FORMAT(endTime,'%Y-%m-%d %H:%i:%s');
+-- 	SELECT (TO_DAYS(endDate) - TO_DAYS(beginDate)) INTO difDay;
+-- 	WHILE i < difDay DO
+-- 		INSERT INTO mydate(mydate) VALUES(DATE_ADD(beginDate,INTERVAL i DAY));
+-- 		SET i = i + 1;
+-- 	END WHILE;
+-- END;
+-- 
+-- 
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- 
+-- 
+-- 调用存储过程insterDate()
+-- CALL insertDate('2021-01-01','2023-01-01');
+-- 
+-- 
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- 
+-- 
+-- 签到模块相关视图,视图创建前应当存在mydate表。
+-- 创建次序为:
+-- [
+-- signs_users_teams,
+-- signs_count_team_date,
+-- day_signs_count_team,
+-- day_signs_count_users,
+-- day_signs_user
+-- ]
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- 
+-- 
+--  一、创建视图signs_users_teams
+-- CREATE VIEW signs_users_teams AS SELECT
+-- s.id AS 'sign_id',
+-- s.user_id AS 'user_id',
+-- s.sign_time AS 'sign_time',
+-- u.`name` AS 'user_name',
+-- u.team_id AS 'team_id',
+-- t.`name` AS 'team_name' 
+-- FROM
+-- 	signs AS s
+-- 	INNER JOIN users AS u
+-- 	JOIN teams AS t ON s.user_id = u.id 
+-- 	AND u.team_id = t.id 
+-- WHERE
+-- 	u.is_delete = 0;
+-- 
+-- 
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- 
+-- 
+-- 	二、(依赖于视图 signs_users_teams)创建视图,根据团队、日期分组签到统计signs_count_team_date
+-- CREATE VIEW signs_count_team_date AS SELECT
+-- Date( sign_time ) AS 'sign_date',
+-- team_id,
+-- team_name,
+-- ( COUNT( team_id ) ) AS 'sign_count' 
+-- FROM
+-- 	signs_users_teams 
+-- GROUP BY
+-- 	Date( sign_time ),
+-- 	team_id 
+-- ORDER BY
+-- 	team_id;
+-- 
+-- 
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- 
+-- 
+-- 三、(依赖于视图 signs_count_team_date、表mydate 、表teams )统计每日团队签到总计
+-- CREATE VIEW day_signs_count_team AS SELECT
+-- IFNULL( sctd.sign_count, 0 ) AS day_count,
+-- td.date,
+-- td.team_id,
+-- td.`name` AS 'team_name' 
+-- FROM
+-- 	signs_count_team_date AS sctd
+-- 	RIGHT JOIN (
+-- 	SELECT
+-- 		m.date,
+-- 		t.id AS team_id,
+-- 		t.`name` 
+-- 	FROM
+-- 		( SELECT Date( mydate ) AS 'date' FROM mydate ) AS m
+-- 		JOIN ( SELECT id, `name` FROM teams ) AS t 
+-- 	ORDER BY
+-- 		t.id 
+-- 	) AS td ON sctd.sign_date = td.date 
+-- 	AND sctd.team_id = td.team_id 
+-- ORDER BY
+-- 	td.team_id,
+-- 	td.date;
+-- 
+-- 
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- 
+-- 
+-- 四、(依赖于视图signs_users_teams 、表mydate)创建视图,查看时间段内所有成员签到总计
+-- CREATE VIEW day_signs_count_users AS SELECT
+-- IFNULL( sut.count, 0 ) AS count,
+-- m.date AS date 
+-- FROM
+-- 	(
+-- 	SELECT
+-- 		COUNT(
+-- 		Date( sign_time )) AS count,
+-- 		Date( sign_time ) AS sign_date 
+-- 	FROM
+-- 		signs_users_teams 
+-- 	GROUP BY
+-- 	Date( sign_time )) AS sut
+-- 	RIGHT JOIN ( SELECT Date( mydate ) AS 'date' FROM mydate ) AS m ON Date( sut.sign_date ) = m.date 
+-- ORDER BY
+-- 	m.date;
+-- 
+-- 
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- (依赖于表signs、 表mydate)创建视图,查看指定成员时间段内签到数据
+-- CREATE VIEW day_signs_user AS
+-- SELECT m.date, user_id FROM signs AS s
+-- RIGHT JOIN ( SELECT Date( mydate ) AS 'date' FROM mydate ) AS m ON Date( s.sign_time ) = m.date
+-- 
+-- 
+-- 
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- 结束。
+
