@@ -19,4 +19,5 @@ export default {
   port: '3306',
   dialect: 'mysql',
   logging: process.env.MODE === 'test' ? false : console.log,
+  timezone: '+08:00',
 };

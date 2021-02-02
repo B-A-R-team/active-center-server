@@ -29,8 +29,8 @@ export default class SignService {
    *
    *根据ID返回当天的用户签到信息
    */
-  async findToadySignByUserId(id) {
-    const result = await catchAwaitErr(this.sequelize.query(`SELECT user_id,user_name,sign_time FROM signs_users_teams WHERE user_id=${id} AND Date(sign_time)=Date(now());`, {
+  async findToadySignByUserId(user_id) {
+    const result = await catchAwaitErr(this.sequelize.query(`SELECT user_id,user_name,sign_time FROM signs_users_teams WHERE user_id=${user_id} AND Date(sign_time)=Date(now());`, {
       type: QueryTypes.SELECT,
     }));
     return result;
