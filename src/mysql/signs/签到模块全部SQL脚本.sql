@@ -152,10 +152,9 @@
 -- 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
--- (依赖于表signs、 表mydate)创建视图,查看指定成员时间段内签到数据
+-- (依赖于表signs)创建视图,查看指定成员时间段内签到数据
 -- CREATE VIEW day_signs_user AS
--- SELECT m.date, user_id FROM signs AS s
--- RIGHT JOIN ( SELECT Date( mydate ) AS 'date' FROM mydate ) AS m ON Date( s.sign_time ) = m.date
+-- SELECT user_id, sign_time, Date(sign_time) AS date FROM signs  
 -- 
 -- 
 -- 
