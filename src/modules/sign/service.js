@@ -79,7 +79,7 @@ export default class SignService {
    *获取时间段内指定用户签到记录
    */
   async findUserSignByTime(startTime, endTime, user_id) {
-    const result = await catchAwaitErr(this.sequelize.query(`SELECT date FROM day_signs_user WHERE user_id=${user_id} AND date BETWEEN '${startTime}' AND '${endTime}';`, {
+    const result = await catchAwaitErr(this.sequelize.query(`SELECT sign_time FROM day_signs_user WHERE user_id=${user_id} AND date BETWEEN '${startTime}' AND '${endTime}';`, {
       type: QueryTypes.SELECT,
     }));
     return result;

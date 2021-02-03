@@ -109,12 +109,13 @@ export function TeamDataAssembly(teamList, dataList) {
 export function UserDataAssembly(dateList, signList) {
   const chartData = new Array(dateList.length);
   for (let i = 0; i < chartData.length; i += 1) {
-    chartData[i] = 0;
+    chartData[i] = [];
   }
   signList.forEach((item) => {
+    console.log(item);
     for (let i = 0; i < dateList.length; i += 1) {
-      if (item.date === dateList[i]) {
-        chartData[i] += 1;
+      if (getDateByTimeStamp(item.sign_time) === dateList[i]) {
+        chartData[i].push(item.sign_time);
       }
     }
   });
