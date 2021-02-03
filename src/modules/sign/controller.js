@@ -125,7 +125,7 @@ export default class SignController {
     const {
       id,
     } = ctx.request.params;
-    if (!Number.isFinite(id)) {
+    if (!(id * 1)) {
       ctx.body = response(httpState.INVALID_PARAMS, null, '参数错误');
       return;
     }
@@ -175,7 +175,7 @@ export default class SignController {
     const {
       id,
     } = ctx.request.params;
-    if (!Number.isFinite(id)) {
+    if (!(id * 1)) {
       ctx.body = response(httpState.INVALID_PARAMS, null, '参数错误');
       return;
     }
