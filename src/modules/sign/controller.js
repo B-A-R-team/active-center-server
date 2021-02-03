@@ -1,6 +1,7 @@
-import {
+import response, {
   errorResponse,
   successResponse,
+  httpState,
 } from '../../common/utils/response';
 import SignService from './service';
 import {
@@ -53,8 +54,8 @@ export default class SignController {
       user_id,
       admin_id,
     } = ctx.request.body;
-    if (!user_id) {
-      ctx.body = errorResponse('参数错误');
+    if ((!user_id) || (!admin_id)) {
+      ctx.body = response(httpState.INVALID_PARAMS, null, '参数缺失');
       return;
     }
     // 异步获取签到记录
@@ -66,7 +67,7 @@ export default class SignController {
     // 根据签到策略检查是否允许签到
     const { isAllowSign, message } = SignInStrategy(signList, 'day_once');
     if (!isAllowSign) {
-      ctx.body = errorResponse(message);
+      ctx.body = successResponse(message);
       return;
     }
     // 异步添加签到记录
@@ -124,6 +125,10 @@ export default class SignController {
     const {
       id,
     } = ctx.request.params;
+    if (!Number.isFinite(id)) {
+      ctx.body = response(httpState.INVALID_PARAMS, null, '参数错误');
+      return;
+    }
     if (type === 'today') {
       const date = getTodayDate();
       const [err, result] = await this.signService.findUserTodayById(id, date);
@@ -155,7 +160,7 @@ export default class SignController {
       result.user_sign = Data;
       ctx.body = successResponse(result);
     } else {
-      ctx.body = errorResponse('参数错误');
+      ctx.body = response(httpState.INVALID_PARAMS, null, '参数错误');
     }
   }
 
@@ -170,6 +175,10 @@ export default class SignController {
     const {
       id,
     } = ctx.request.params;
+    if (!Number.isFinite(id)) {
+      ctx.body = response(httpState.INVALID_PARAMS, null, '参数错误');
+      return;
+    }
     if (type === 'today') {
       const date = getTodayDate();
       const [err, result] = await this.signService.findTeamToadyById(id, date);
@@ -207,7 +216,7 @@ export default class SignController {
       result.team_sign = Data;
       ctx.body = successResponse(result);
     } else {
-      ctx.body = errorResponse('参数错误');
+      ctx.body = response(httpState.INVALID_PARAMS, null, '参数错误');
     }
   }
 
@@ -266,6 +275,10 @@ export default class SignController {
       result.team_list = TeamData;
     } else {
       if (user_id) {
+        if (!(user_id * 1)) {
+          ctx.body = response(httpState.INVALID_PARAMS, null, '参数错误');
+          return;
+        }
         // 异步获取用户签到源数据
         const [usererr, userData] =
         await this.signService.findUserSignByTime(startTime, endTime, user_id);
@@ -279,6 +292,10 @@ export default class SignController {
         result.user_sign = Data;
       }
       if (team_id) {
+        if (!(team_id * 1)) {
+          ctx.body = response(httpState.INVALID_PARAMS, null, '参数错误');
+          return;
+        }
         // 异步获取所有团队签到源数据,该数据需进一步加工
         const [err, data] = await this.signService.findTeamListByTime(startTime, endTime);
         if (err) {

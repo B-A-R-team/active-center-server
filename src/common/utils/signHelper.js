@@ -112,7 +112,6 @@ export function UserDataAssembly(dateList, signList) {
     chartData[i] = [];
   }
   signList.forEach((item) => {
-    console.log(item);
     for (let i = 0; i < dateList.length; i += 1) {
       if (getDateByTimeStamp(item.sign_time) === dateList[i]) {
         chartData[i].push(item.sign_time);
