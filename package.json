@@ -23,7 +23,6 @@
     "pretest": "eslint ./test --fix",
     "test": "set MODE=test&&mocha -r @babel/register test/**/*test.js",
     "coverage": "nyc npm run test",
-    "coverage2": "nyc npm run test2",
     "prebuild": "eslint ./src --fix",
     "build": "babel src --out-dir dist",
     "start": "node dist/bin/start.js",
