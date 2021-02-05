@@ -59,7 +59,7 @@ export default class SignController {
       return;
     }
     // 异步获取签到记录
-    const [err, signList] = await this.signService.findToadySignByUserId(user_id);
+    const [err, signList] = await this.signService.findTodaySignByUserId(user_id);
     if (err) {
       ctx.body = errorResponse(err.message);
       return;
