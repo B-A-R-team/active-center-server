@@ -30,6 +30,7 @@ export default class UserService {
       updatedAt,
       team_id,
       Team,
+      card_id,
     } = user;
     return {
       id,
@@ -42,6 +43,7 @@ export default class UserService {
       comment,
       createdAt,
       updatedAt,
+      card_id,
       team_id,
       team: Team.name,
     };
@@ -68,7 +70,7 @@ export default class UserService {
     const [err, user] = await catchAwaitErr(
       this.user.findOne({
         include: { model: TeamEntity, attributes: ['name'] },
-        attributes: { exclude: ['password', 'card_id', 'is_delete'] },
+        attributes: { exclude: ['password', 'is_delete'] },
         where: { id, is_delete: false },
       })
     );

@@ -1,4 +1,3 @@
-import path from 'path';
 import response, {
   errorResponse,
   httpState,
