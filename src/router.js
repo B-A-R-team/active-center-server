@@ -88,13 +88,17 @@ const rootRoutes = routerGroup('/api', (rootRouter) => {
   /**
    * 权限路由
    * GET    api/permission 获取权限
+   * GET    api/permission/:id 根据ID获取权限
    * POST   api/permission 创建权限
+   * PUT    api/permission/:id 修改权限
    */
   const permissionRoutes = routerGroup('/permission', (permissionRouter) => {
     const permissionController = new PermissionController();
 
     permissionRouter.get('/', (ctx) => permissionController.findAll(ctx));
+    permissionRouter.get('/:id', (ctx) => permissionController.findById(ctx));
     permissionRouter.post('/', (ctx) => permissionController.create(ctx));
+    permissionRouter.put('/:id', (ctx) => permissionController.update(ctx));
   });
 
   /**

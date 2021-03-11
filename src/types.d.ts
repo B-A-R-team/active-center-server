@@ -49,3 +49,11 @@ export type TeamDto = {
 };
 
 export type CreateTeamDto = Pick<TeamDto, 'id' | 'name' | 'teacher'>;
+
+export type PermissionDto = {
+  id: number;
+  name: string;
+  url: string;
+  type: string;
+  desc: string;
+};
