@@ -91,12 +91,12 @@ export default class UserController {
    * @param {import('../../types').CustomContext} ctx 上下文
    */
   async register(ctx) {
-    const [err] = await this.userService.register(ctx.request.body);
+    const [err, user_id] = await this.userService.register(ctx.request.body);
     if (err) {
       ctx.body = errorResponse(err.message);
       return;
     }
-    ctx.body = successResponse({ result: true });
+    ctx.body = successResponse(user_id);
   }
 
   /**

@@ -121,6 +121,8 @@ export default class UserService {
     const [findRoleErr, role] = await this.roleService.findById(1);
     if (findRoleErr) return [findRoleErr, null];
 
+    let user_id;
+
     // 事务提交
     // 创建用户并增加用户和默认角色的中间表数据
     const transactionErr = await transaction(async (t) => {
@@ -128,11 +130,12 @@ export default class UserService {
         { stu_id, password, class_name, name, team_id },
         { transaction: t }
       );
+      user_id = newUser.id;
       await newUser.setRoles(role, { transaction: t });
     });
     if (transactionErr) return [transactionErr, null];
 
-    return [null, { result: true }];
+    return [null, { user_id }];
   }
 
   /**

@@ -24,11 +24,11 @@ export default class TeamController {
    * @param {import('../../types').CustomContext} ctx 上下文
    */
   async create(ctx) {
-    const [err] = await this.teamService.create(ctx.request.body);
+    const [err, data] = await this.teamService.create(ctx.request.body);
     if (err) {
       ctx.body = errorResponse(err.message);
       return;
     }
-    ctx.body = successResponse({ result: true });
+    ctx.body = successResponse(data);
   }
 }
