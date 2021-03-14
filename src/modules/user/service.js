@@ -53,13 +53,17 @@ export default class UserService {
    * 查找所有用户
    */
   async findAll() {
-    const result = await catchAwaitErr(
+    const [err, users] = await catchAwaitErr(
       this.user.findAll({
-        attributes: { exclude: ['password', 'card_id', 'is_delete'] },
+        include: { model: TeamEntity, attributes: ['name'] },
+        attributes: { exclude: ['password', 'is_delete'] },
         where: { is_delete: false },
       })
     );
-    return result;
+
+    const userList = users?.map((user) => this.adapterUserData(user));
+
+    return [err, userList];
   }
 
   /**
@@ -106,6 +110,19 @@ export default class UserService {
       })
     );
     return [err, user ? this.adapterUserData(user) : user];
+  }
+
+  async findByTeam(team_id) {
+    const [err, users] = await catchAwaitErr(
+      this.user.findAll({
+        include: { model: TeamEntity, attributes: ['id', 'name'] },
+        attributes: { exclude: ['password', 'card_id', 'is_delete'] },
+        where: { team_id },
+      })
+    );
+
+    const userList = users?.map((user) => this.adapterUserData(user));
+    return [err, userList];
   }
 
   /**
