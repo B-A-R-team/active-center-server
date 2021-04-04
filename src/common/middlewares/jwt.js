@@ -26,6 +26,10 @@ const notCheckApi = [
     path: /^\/avatars*/,
     method: 'GET',
   },
+  {
+    path: /^\/api\/user*/,
+    method: 'GET',
+  },
 ];
 
 const specialApi = ['/', '/api', '/api/register', '/api/login', '/api/sign'];
