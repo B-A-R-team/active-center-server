@@ -9,6 +9,7 @@ module.exports = {
       env: {
         PORT: '2048',
         MODE: 'prod',
+        HTTPS: 'https',
       },
     },
   ],
