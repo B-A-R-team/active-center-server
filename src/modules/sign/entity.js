@@ -26,6 +26,10 @@ Sign.init({
       return moment(this.getDataValue('sign_time')).format('YYYY-MM-DD HH:mm:ss');
     },
   },
+  signOut_time: {
+    type: DataTypes.DATE,
+    defaultValue: null,
+  },
 }, {
   sequelize: initDB(),
   modelName: 'Sign',

@@ -26,11 +26,26 @@ export default class SignService {
   }
 
   /**
+   * 签退
+   */
+  async signOut(signId, time) {
+    const result = await catchAwaitErr(this.sign.update({
+      signOut_time: time,
+    }, {
+      where: {
+        id: signId,
+      },
+    }));
+
+    return result;
+  }
+
+  /**
    *
    *根据用户ID返回当天的签到记录
    */
   async findTodaySignByUserId(user_id) {
-    const result = await catchAwaitErr(this.sequelize.query(`SELECT user_id,user_name,sign_time FROM signs_users_teams WHERE user_id=${user_id} AND Date(sign_time)=Date(now());`, {
+    const result = await catchAwaitErr(this.sequelize.query(`SELECT sign_id,user_id,user_name,sign_time,signOut_time FROM signs_users_teams WHERE user_id=${user_id} AND Date(sign_time)=Date(now());`, {
       type: QueryTypes.SELECT,
     }));
     return result;

@@ -67,6 +67,7 @@
 -- s.id AS 'sign_id',
 -- s.user_id AS 'user_id',
 -- s.sign_time AS 'sign_time',
+-- s.signOut_time As 'signOut_time',
 -- u.`name` AS 'user_name',
 -- u.team_id AS 'team_id',
 -- t.`name` AS 'team_name' 

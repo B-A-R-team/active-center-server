@@ -4,44 +4,17 @@ import response, {
   httpState,
 } from '../../common/utils/response';
 import SignService from './service';
-import {
-  getListByTime,
-  TimeFitter,
-  getTodayDate,
-  getWeekDate,
-  TeamDataAssembly,
-  UserDataAssembly,
-} from '../../common/utils/signHelper';
-
-/**
- *签到策略
- * @param {Array}  _signList 当日签到数据列表
- * @param {String} type 签到策略
- * @return {*} { isAllowSign, message } { 是否允许签到, 消息 }
- */
-function SignInStrategy(_signList, type) {
-  const Strategy = {
-    // 每日一次签到
-    day_once(signList) {
-      let isAllowSign = true;
-      let message = '今日未签到';
-      if (signList.length >= 1) {
-        isAllowSign = false;
-        message = '今日已签到,无须重复签到';
-      }
-      return { isAllowSign, message };
-    },
-    //
-  };
-  if (!Strategy[type]) return { isAllowSign: false, message: '没有该签到策略' };
-  return Strategy[type](_signList);
-}
+import SignHelper from '../../common/utils/signHelper';
 
 
 export default class SignController {
-  // 注入 signService
-  constructor(InjectService = SignService) {
-    this.signService = new InjectService();
+  // 注入 signService、signHelper
+  constructor(InjectService = {
+    SignService,
+    SignHelper,
+  }) {
+    this.signService = new InjectService.SignService();
+    this.signHelper = new InjectService.SignHelper();
   }
 
   /**
@@ -54,7 +27,10 @@ export default class SignController {
       user_id,
       admin_id,
     } = ctx.request.body;
-    if ((!user_id) || (!admin_id)) {
+    const {
+      type,
+    } = ctx.request.query;
+    if ((!user_id) || (!admin_id) || (!type)) {
       ctx.body = response(httpState.INVALID_PARAMS, null, '参数缺失');
       return;
     }
@@ -64,16 +40,37 @@ export default class SignController {
       ctx.body = errorResponse(err.message);
       return;
     }
-    // 根据签到策略检查是否允许签到
-    const { isAllowSign, message } = SignInStrategy(signList, 'day_once');
-    if (!isAllowSign) {
-      ctx.body = successResponse(message);
+    // 根据签到策略检查是否允许签到或签退
+    const {
+      isAllowSignIn,
+      isAllowSignOut,
+      message,
+    } = this.signHelper.SignInStrategy(signList, 'day_InAndOut');
+
+    // 根据打卡类型添加或修改签到记录
+    let [signErr, SignData] = [null, null];
+    if (type === 'signIn') {
+      // 签到操作
+      if (!isAllowSignIn) {
+        ctx.body = successResponse(message);
+        return;
+      }
+      [signErr, SignData] = await this.signService.signIn(user_id, admin_id);
+    } else if (type === 'signOut') {
+      // 签退操作
+      if (!isAllowSignOut) {
+        ctx.body = successResponse(message);
+        return;
+      }
+      const signId = signList[0].sign_id;
+      [signErr, SignData] = await this.signService.signOut(signId, this.signHelper.getDateTime());
+    } else {
+      ctx.body = errorResponse('type参数错误');
       return;
     }
     // 异步添加签到记录
-    const [signErr, SignData] = await this.signService.signIn(user_id, admin_id);
     if (signErr) {
-      ctx.body = errorResponse(err.message);
+      ctx.body = errorResponse(signErr.message);
       return;
     }
     ctx.body = successResponse(SignData);
@@ -88,9 +85,9 @@ export default class SignController {
     const {
       startTime,
       endTime,
-    } = getWeekDate();
+    } = this.signHelper.getWeekDate();
     // 根据开始和结束时间生成列表
-    const date_list = getListByTime(startTime, endTime);
+    const date_list = this.signHelper.getListByTime(startTime, endTime);
     // 定义响应对象
     const result = {};
     // 挂载日期列表
@@ -108,7 +105,7 @@ export default class SignController {
       return;
     }
     // 对团队签到的源数据进行加工
-    const TeamData = TeamDataAssembly(teamList, data);
+    const TeamData = this.signHelper.TeamDataAssembly(teamList, data);
     // 所有团队签到总计
     result.team_list = TeamData;
     ctx.body = successResponse(result);
@@ -130,7 +127,7 @@ export default class SignController {
       return;
     }
     if (type === 'today') {
-      const date = getTodayDate();
+      const date = this.signHelper.getTodayDate();
       const [err, result] = await this.signService.findUserTodayById(id, date);
       if (err) {
         ctx.body = errorResponse(err.message);
@@ -141,9 +138,9 @@ export default class SignController {
       const {
         startTime,
         endTime,
-      } = getWeekDate();
+      } = this.signHelper.getWeekDate();
       // 根据开始和结束时间生成列表
-      const date_list = getListByTime(startTime, endTime);
+      const date_list = this.signHelper.getListByTime(startTime, endTime);
       // 定义响应对象
       const result = {};
       // 挂载日期列表
@@ -156,7 +153,7 @@ export default class SignController {
         return;
       }
       // 数据加工
-      const Data = UserDataAssembly(date_list, userData);
+      const Data = this.signHelper.UserDataAssembly(date_list, userData);
       result.user_sign = Data;
       ctx.body = successResponse(result);
     } else {
@@ -180,7 +177,7 @@ export default class SignController {
       return;
     }
     if (type === 'today') {
-      const date = getTodayDate();
+      const date = this.signHelper.getTodayDate();
       const [err, result] = await this.signService.findTeamToadyById(id, date);
       if (err) {
         ctx.body = errorResponse(err.message);
@@ -191,9 +188,9 @@ export default class SignController {
       const {
         startTime,
         endTime,
-      } = getWeekDate();
+      } = this.signHelper.getWeekDate();
       // 根据开始和结束时间生成列表
-      const date_list = getListByTime(startTime, endTime);
+      const date_list = this.signHelper.getListByTime(startTime, endTime);
       // 定义响应对象
       const result = {};
       // 挂载日期列表
@@ -211,7 +208,7 @@ export default class SignController {
         return;
       }
       // 对团队签到的源数据进行加工
-      const TeamData = TeamDataAssembly(teamList, data);
+      const TeamData = this.signHelper.TeamDataAssembly(teamList, data);
       const Data = TeamData.filter((item) => (Number(item.id) === Number(id)));
       result.team_sign = Data;
       ctx.body = successResponse(result);
@@ -239,9 +236,9 @@ export default class SignController {
     const {
       startTime,
       endTime,
-    } = TimeFitter(start, end);
+    } = this.signHelper.TimeFitter(start, end);
     // 根据开始和结束时间生成列表
-    const date_list = getListByTime(startTime, endTime);
+    const date_list = this.signHelper.getListByTime(startTime, endTime);
     // 定义响应对象
     const result = {};
     // 挂载日期列表
@@ -267,7 +264,7 @@ export default class SignController {
         return;
       }
       // 对团队签到的源数据进行加工
-      const TeamData = TeamDataAssembly(teamList, data);
+      const TeamData = this.signHelper.TeamDataAssembly(teamList, data);
       // 挂载信息
       // 所有成员签到总计
       result.count_list = countData;
@@ -287,7 +284,7 @@ export default class SignController {
           return;
         }
         // 数据加工
-        const Data = UserDataAssembly(date_list, userData);
+        const Data = this.signHelper.UserDataAssembly(date_list, userData);
         // 数据挂载
         result.user_sign = Data;
       }
@@ -303,7 +300,7 @@ export default class SignController {
           return;
         }
         // 对团队签到的源数据进行加工
-        const TeamData = TeamDataAssembly(teamList, data);
+        const TeamData = this.signHelper.TeamDataAssembly(teamList, data);
         const Data = TeamData.filter((item) => (Number(item.id) === Number(team_id)));
         result.team_sign = Data;
       }
