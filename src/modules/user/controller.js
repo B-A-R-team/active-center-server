@@ -10,10 +10,6 @@ import {
 } from '../../common/utils/tokenHelper';
 import UserService from './service';
 import uploadConfig from '../../config/upload';
-import {
-  appID,
-  appSecret,
-} from '../../config/sensitive';
 
 export default class UserController {
   // 注入service
@@ -206,7 +202,7 @@ export default class UserController {
   async WXMinApplogin(ctx) {
     const {
       data,
-    } = await axios.get(`https://api.weixin.qq.com/sns/jscode2session?appid=${appID}&secret=${appSecret}&js_code=${ctx.request.body.code}&grant_type=authorization_code`);
+    } = await axios.get(`https://api.weixin.qq.com/sns/jscode2session?appid=${ctx.request.body.appid}&secret=${ctx.request.body.secret}&js_code=${ctx.request.body.js_code}&grant_type=authorization_code`);
     if (data.errcode) {
       ctx.body = errorResponse(data.errmsg);
       return;
