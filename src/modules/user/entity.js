@@ -17,6 +17,7 @@ User.init(
     class_name: { type: DataTypes.CHAR(255) },
     avatar_url: { type: DataTypes.CHAR(255) },
     comment: { type: DataTypes.CHAR(255) },
+    openId: { type: DataTypes.CHAR(255) },
     is_delete: { type: DataTypes.BOOLEAN, defaultValue: false },
   },
   { sequelize: initDB(), modelName: 'User' }

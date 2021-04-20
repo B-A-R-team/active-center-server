@@ -32,7 +32,7 @@ const notCheckApi = [
   },
 ];
 
-const specialApi = ['/', '/api', '/api/register', '/api/login', '/api/sign'];
+const specialApi = ['/', '/api', '/api/register', '/api/login', '/api/sign', '/api/wxminapplogin', '/api/bindwxminapp'];
 
 function isInApiArr(path, method) {
   return notCheckApi.some((route) => {

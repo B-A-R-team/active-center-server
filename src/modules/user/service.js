@@ -31,6 +31,7 @@ export default class UserService {
       team_id,
       Team,
       card_id,
+      openId,
     } = user;
     return {
       id,
@@ -44,6 +45,7 @@ export default class UserService {
       createdAt,
       updatedAt,
       card_id,
+      openId,
       team_id,
       team: Team.name,
     };
@@ -220,6 +222,49 @@ export default class UserService {
   async updateAvatar(id, avatar_url) {
     const result = await catchAwaitErr(
       this.user.update({ avatar_url }, { where: { id } })
+    );
+    return result;
+  }
+
+  /**
+   * 微信小程序登录
+   * @param {string} openId 微信用户唯一标识
+   * @returns {Promise<[err: Error|null, resultUser: import('../../types').LoginDto | null]>}
+   */
+  async WXMinAppLogin(openId) {
+    const [err, user] = await catchAwaitErr(
+      this.user.findOne({
+        include: { model: RoleEntity, attributes: ['id'] },
+        where: { openId, is_delete: false },
+      })
+    );
+
+    if (!user) return [err, null];
+
+    const resultUser = {
+      id: user.id,
+      stu_id: user.stu_id,
+      avatar_url: user.avatar_url,
+      name: user.name,
+      openId: user.openId,
+      role_id: user.Roles.map((item) => item.id),
+      team_id: user.team_id,
+    };
+
+    return [err, resultUser];
+  }
+
+  /**
+   * 绑定微信用户唯一标识符
+   * @param {string} stu_id 学号
+   * @param {string} password 密码
+   * @param {string} openId 微信用户唯一标识符
+   * @returns {Promise<[err: Error|null, resultUser: import('../../types').LoginDto | null]>}
+   */
+  async BindWXMinApp(stu_id, password, openId) {
+    const encrytionPassword = encryption(password);
+    const result = await catchAwaitErr(
+      this.user.update({ openId }, { where: { stu_id, password: encrytionPassword } })
     );
     return result;
   }

@@ -1,12 +1,19 @@
+import axios from 'axios';
 import response, {
   errorResponse,
   httpState,
   responseWithToken,
   successResponse,
 } from '../../common/utils/response';
-import { generateToken } from '../../common/utils/tokenHelper';
+import {
+  generateToken,
+} from '../../common/utils/tokenHelper';
 import UserService from './service';
 import uploadConfig from '../../config/upload';
+import {
+  appID,
+  appSecret,
+} from '../../config/sensitive';
 
 export default class UserController {
   // 注入service
@@ -45,7 +52,11 @@ export default class UserController {
    * @param {import('../../types').CustomContext} ctx 上下文
    */
   async findWhere(ctx) {
-    const { id, card_id, stu_id } = ctx.query;
+    const {
+      id,
+      card_id,
+      stu_id,
+    } = ctx.query;
 
     /**
      * 查询策略
@@ -145,7 +156,9 @@ export default class UserController {
         ctx.body = errorResponse(err.message);
         return;
       }
-      ctx.body = successResponse({ result: true });
+      ctx.body = successResponse({
+        result: true,
+      });
       return;
     }
 
@@ -158,7 +171,9 @@ export default class UserController {
       ctx.body = errorResponse(err.message);
       return;
     }
-    ctx.body = successResponse({ result: true });
+    ctx.body = successResponse({
+      result: true,
+    });
   }
 
   /**
@@ -182,5 +197,67 @@ export default class UserController {
     ctx.body = successResponse({
       avatar_url,
     });
+  }
+
+  /**
+   * 微信小程序登录
+   * @param {import('../../types').CustomContext} ctx 上下文
+   */
+  async WXMinApplogin(ctx) {
+    const {
+      data,
+    } = await axios.get(`https://api.weixin.qq.com/sns/jscode2session?appid=${appID}&secret=${appSecret}&js_code=${ctx.request.body.code}&grant_type=authorization_code`);
+    if (data.errcode) {
+      ctx.body = errorResponse(data.errmsg);
+      return;
+    }
+    const {
+      openid,
+    } = data;
+    const [err, user] = await this.userService.WXMinAppLogin(openid);
+    if (err) {
+      ctx.body = errorResponse(err.message);
+      return;
+    }
+
+    if (!user) {
+      ctx.body = response(
+        httpState.INVALID_PARAMS, {
+          openId: openid,
+        },
+        '登录失败,未查询到绑定用户!'
+      );
+      return;
+    }
+
+    // token内保存的数据包含`用户ID`和`权限ID拼成的字符串`和 openid.
+    // { id: 1, roleId: "1,2,3", openid }
+    ctx.body = responseWithToken(
+      user,
+      generateToken(user.id, user.role_id.join(','), openid)
+    );
+  }
+
+  /**
+   * 微信小程序用户绑定
+   * @param {import('../../types').CustomContext} ctx 上下文
+   */
+  async BindWXMinApp(ctx) {
+    const [err, result] = await this.userService.BindWXMinApp(
+      ctx.request.body.stu_id,
+      ctx.request.body.password,
+      ctx.request.body.openId,
+    );
+    if (err) {
+      ctx.body = errorResponse(err);
+      return;
+    }
+    if (result[0] === 0) {
+      ctx.body = response(httpState.INVALID_PARAMS, null, '绑定失败,账户信息有误!');
+    } else {
+      ctx.body = successResponse({
+        result: '绑定成功',
+      });
+    }
   }
 }

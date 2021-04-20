@@ -51,6 +51,8 @@ const rootRoutes = routerGroup('/api', (rootRouter) => {
   rootRouter.post('/upload/avatar/:id', uploadAvatar.single('avatar'), (ctx) =>
     baseApiController.uploadAvatar(ctx)
   );
+  rootRouter.post('/wxminapplogin', (ctx) => baseApiController.WXMinApplogin(ctx));
+  rootRouter.post('/bindwxminapp', (ctx) => baseApiController.BindWXMinApp(ctx));
 
   /**
    * 用户路由
